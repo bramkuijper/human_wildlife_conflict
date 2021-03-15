@@ -75,7 +75,6 @@ void init_arguments(int argc, char **argv)
     init_site_resources = atof(argv[argv_ctr++]);
     filename = argv[argv_ctr++];
 
-    std::cout << "filename: " << filename << std::endl;
 } // end init_arguments
 
 /**
@@ -103,14 +102,13 @@ void write_parameters(std::ofstream &output_file)
 void init_population()
 {
     // initialize patches according to frequency distribution
-    std::discrete_distribution<PatchType> patch_distr(p.begin(),p.end());
-    
+    std::discrete_distribution<int> patch_distr(p.begin(),p.end());
 
     for (int site_i = 0; site_i < n_sites; ++site_i)
     {
         meta_population[site_i].resource = init_site_resources;
 
-        meta_population[site_i].type = patch_distr(rng_r);
+        meta_population[site_i].type = static_cast<PatchType>(patch_distr(rng_r));
         std::cout<<meta_population[site_i].attacked_by.size() <<std::endl;
         meta_population[site_i].attacked_by.clear(); 
     } // end for site_i
@@ -144,7 +142,7 @@ void forage()
     std::uniform_int_distribution<int> random_site(0, n_sites - 1);
 
     //  update attack counters of sites
-    for (int site_i = 0; n_sites; ++site_i)
+    for (int site_i = 0; site_i < n_sites; ++site_i)
     {
         meta_population[site_i].attacked_by.clear();
     }
@@ -178,7 +176,6 @@ void forage()
                 it != meta_population[site_i].attacked_by.end();
                 ++it)
         {
-            std::cout << *it << std::endl;
             wildlife[*it].resources += resources_per_individual;
         }
     } // end for site i
